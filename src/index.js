@@ -69,7 +69,8 @@ const onLoaded = () => {
 };
 
 
-document.addEventListener("DOMContentLoaded", onLoaded);
+// document.addEventListener("DOMContentLoaded", onLoaded);
+onLoaded();
 
 
 
