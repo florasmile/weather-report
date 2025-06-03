@@ -6,6 +6,8 @@ const state = {
   tempValue: null,
   temp: 60,
   landscape: null,
+  headerCityName: null,
+  cityNameInput: null
 };
 
 
@@ -44,12 +46,23 @@ const decreaseTempByOne = () => {
   updateVisuals();
 };
 
+const updateCityName = () => {
+  // read cityname from input text box
+  const cityName = state.cityNameInput.value; 
+  // add cityName to headerCityName
+  state.headerCityName.textContent = cityName;
+}
 
 // registerEvents, link the action to the element to change the state
 //when clicked on the increaseTempControl (up arrow), we want to increase the tempValue by one 
 const registerEvents = () => {
   state.increaseTempControl.addEventListener('click', increaseTempByOne);
   state.decreaseTempControl.addEventListener("click", decreaseTempByOne);
+  state.cityNameInput.addEventListener("keydown", (event) => {
+    if (event.key == "Enter") {
+      updateCityName();
+    }
+  })
 };
 
 
@@ -59,6 +72,8 @@ const loadControls = () => {
   state.decreaseTempControl = document.getElementById("decreaseTempControl");
   state.tempValue = document.getElementById("tempValue");
   state.landscape = document.getElementById("landscape");
+  state.headerCityName = document.getElementById("headerCityName");
+  state.cityNameInput = document.getElementById("cityNameInput");
 };
 
 
