@@ -7,7 +7,8 @@ const state = {
   temp: 60,
   landscape: null,
   headerCityName: null,
-  cityNameInput: null
+  cityNameInput: null,
+  currentTempButton: null,
 };
 
 
@@ -51,6 +52,11 @@ const updateCityName = () => {
   const cityName = state.cityNameInput.value; 
   // add cityName to headerCityName
   state.headerCityName.textContent = cityName;
+};
+
+const getRealTemp = () => {
+  
+
 }
 
 // registerEvents, link the action to the element to change the state
@@ -63,6 +69,7 @@ const registerEvents = () => {
       updateCityName();
     }
   })
+  state.currentTempButton.addEventListener("click", getRealTemp);
 };
 
 
@@ -74,6 +81,7 @@ const loadControls = () => {
   state.landscape = document.getElementById("landscape");
   state.headerCityName = document.getElementById("headerCityName");
   state.cityNameInput = document.getElementById("cityNameInput");
+  state.currentTempButton = document.getElementById("currentTempButton");
 };
 
 
