@@ -54,10 +54,67 @@ const updateCityName = () => {
   state.headerCityName.textContent = cityName;
 };
 
-const getRealTemp = () => {
-  
+//input: cityName
+// output: location<>
+const findLatAndLon = async (cityName) => {
+  const response = await axios.get('http://localhost:5000/location',
+    {
+      params: {
+        q: cityName,
+        format: 'json'
+      }
+    });
+  const { lat, lon } = response.data[0]; //use destructuring
+  return {
+    lat: lat,
+    lon: lon
+  };
+};
 
+//helper method: convert temp from Kelvin unit to Fahrenheit
+const convertTempUnits = (kelvin) => {
+  return Math.round(1.8 * (kelvin-273) + 32);
 }
+
+const getWeatherData = async ({ lat, lon }) => {
+  // const { lat, lon } = location;
+  const response = await axios.get('http://localhost:5000/weather',
+    {
+      params: {
+        lat: lat,
+        lon: lon,
+        format: 'json'
+      }
+    });
+    // get temp from response body, response.main.temp
+    // convert temp from Kelvin to F unit
+    return convertTempUnits(response.data.main.temp);
+};
+// calling APIs to get real temp
+const getRealTemp = async () => {
+  try {
+    // get cityName
+    const cityName = state.cityNameInput.value;
+    // edge case: what is cityName = ""
+    // get lat, lon from calling API
+    const location = await findLatAndLon(cityName);
+    // console.log(location);
+    // get weather using lat, lon and calling API
+    const temp = await getWeatherData(location);
+    // verify response from weather data and get temp
+    return temp;
+  }
+  catch (error) {
+    console.log(error);
+  };
+};
+
+const updateRealTemp = async () => {
+    const temp = await getRealTemp();
+     // update tempValue
+    state.temp = temp;
+    updateVisuals();
+  } 
 
 // registerEvents, link the action to the element to change the state
 //when clicked on the increaseTempControl (up arrow), we want to increase the tempValue by one 
@@ -69,7 +126,7 @@ const registerEvents = () => {
       updateCityName();
     }
   })
-  state.currentTempButton.addEventListener("click", getRealTemp);
+  state.currentTempButton.addEventListener("click", updateRealTemp);
 };
 
 
@@ -95,6 +152,3 @@ const onLoaded = () => {
 // document.addEventListener("DOMContentLoaded", onLoaded);
 onLoaded();
 
-
-
-//<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
