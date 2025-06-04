@@ -9,6 +9,8 @@ const state = {
   headerCityName: null,
   cityNameInput: null,
   currentTempButton: null,
+  skySelect: null,
+  sky: null
 };
 
 
@@ -116,6 +118,20 @@ const updateRealTemp = async () => {
     updateVisuals();
   } 
 
+const changeSky = () => {
+  // get sky condition value
+  const skyCondition = state.skySelect.value;
+  // add sky based on sky condition
+  if(skyCondition === "clear") {
+    state.sky.textContent = "☁️ ☁️ ☁️ ☀️ ☁️ ☁️";
+  } else if(skyCondition === "clouds"){
+    state.sky.textContent = "☁️☁️ ☁️ ☁️☁️ ☁️ 🌤 ☁️ ☁️☁️";
+  }else if(skyCondition === "rain") {
+    state.sky.textContent = "🌧🌈⛈🌧🌧💧⛈🌧🌦🌧💧🌧🌧";
+  }else if(skyCondition === "snow") {
+    state.sky.textContent = "🌨❄️🌨🌨❄️❄️🌨❄️🌨❄️❄️🌨🌨";
+  }
+};
 // registerEvents, link the action to the element to change the state
 //when clicked on the increaseTempControl (up arrow), we want to increase the tempValue by one 
 const registerEvents = () => {
@@ -127,6 +143,7 @@ const registerEvents = () => {
     }
   })
   state.currentTempButton.addEventListener("click", updateRealTemp);
+  state.skySelect.addEventListener("change", changeSky);
 };
 
 
@@ -139,6 +156,8 @@ const loadControls = () => {
   state.headerCityName = document.getElementById("headerCityName");
   state.cityNameInput = document.getElementById("cityNameInput");
   state.currentTempButton = document.getElementById("currentTempButton");
+  state.skySelect = document.getElementById("skySelect");
+  state.sky = document.getElementById("sky");
 };
 
 
@@ -146,6 +165,7 @@ const onLoaded = () => {
   loadControls();
   registerEvents();
   updateVisuals();
+  changeSky();
 };
 
 
