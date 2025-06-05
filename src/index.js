@@ -12,13 +12,15 @@ const state = {
   currentTempButton: null,
   skySelect: null,
   sky: null,
-  cityNameReset: null
+  cityNameReset: null,
+  gardenContent: null
 };
 
 
 const updateVisuals = () => {
   const value = state.temp;
   state.tempValue.textContent = value;
+  // clear all existing classes
   state.tempValue.className = "";
 
   if (value >= 80) {
@@ -95,44 +97,55 @@ const getWeatherData = async ({ lat, lon }) => {
     return convertTempUnits(response.data.main.temp);
 };
 // calling APIs to get real temp
-const getRealTemp = async () => {
+const updateRealTemp = async () => {
   try {
     // get cityName
     const cityName = state.cityNameInput.value;
-    // edge case: what is cityName = ""
     // get lat, lon from calling API
     const location = await findLatAndLon(cityName);
-    // console.log(location);
-    // get weather using lat, lon and calling API
-    const temp = await getWeatherData(location);
-    // verify response from weather data and get temp
-    return temp;
+    // get weather using lat, lon and calling API, update temp value
+    state.temp = await getWeatherData(location);
+    //use updated temp value to update temp color and landscape
+    updateVisuals();
   }
   catch (error) {
     console.log(error);
   };
 };
 
-const updateRealTemp = async () => {
-    const temp = await getRealTemp();
-     // update tempValue
-    state.temp = temp;
-    updateVisuals();
-  } 
+// const updateRealTemp = async () => {
+//     const temp = await getRealTemp();
+//      // update tempValue
+//     state.temp = temp;
+//     updateVisuals();
+//   } 
 
 const changeSky = () => {
   // get sky condition value
   const skyCondition = state.skySelect.value;
+  // remove all existing background colors
+  const skyBackgroundColors = ["sunny", "cloudy", "rainy", "snowy"];
+  skyBackgroundColors.forEach((color) => {
+    if(state.gardenContent.classList.contains(color)) {
+      state.gardenContent.classList.remove(color);
+    }
+  })
+  let background = "";
   // add sky based on sky condition
   if(skyCondition === "clear") {
     state.sky.textContent = "☁️ ☁️ ☁️ ☀️ ☁️ ☁️";
+    background = "sunny";
   } else if(skyCondition === "clouds"){
     state.sky.textContent = "☁️☁️ ☁️ ☁️☁️ ☁️ 🌤 ☁️ ☁️☁️";
+    background = "cloudy";
   }else if(skyCondition === "rain") {
     state.sky.textContent = "🌧🌈⛈🌧🌧💧⛈🌧🌦🌧💧🌧🌧";
+    background = "rainy";
   }else if(skyCondition === "snow") {
     state.sky.textContent = "🌨❄️🌨🌨❄️❄️🌨❄️🌨❄️❄️🌨🌨";
+    background = "snowy";
   }
+  state.gardenContent.classList.add(background);
 };
 
 const resetCityName = () => {
@@ -168,6 +181,7 @@ const loadControls = () => {
   state.skySelect = document.getElementById("skySelect");
   state.sky = document.getElementById("sky");
   state.cityNameReset = document.getElementById("cityNameReset");
+  state.gardenContent = document.getElementById("gardenContent");
 };
 
 const onLoaded = () => {
