@@ -8,9 +8,11 @@ const state = {
   landscape: null,
   headerCityName: null,
   cityNameInput: null,
+  cityName: "Seattle",
   currentTempButton: null,
   skySelect: null,
-  sky: null
+  sky: null,
+  cityNameReset: null
 };
 
 
@@ -132,6 +134,13 @@ const changeSky = () => {
     state.sky.textContent = "🌨❄️🌨🌨❄️❄️🌨❄️🌨❄️❄️🌨🌨";
   }
 };
+
+const resetCityName = () => {
+  // change the value in the user input box to the default cityName
+  state.cityNameInput.value = state.cityName;
+  // call updateCityName
+  updateCityName();
+}
 // registerEvents, link the action to the element to change the state
 //when clicked on the increaseTempControl (up arrow), we want to increase the tempValue by one 
 const registerEvents = () => {
@@ -144,8 +153,8 @@ const registerEvents = () => {
   })
   state.currentTempButton.addEventListener("click", updateRealTemp);
   state.skySelect.addEventListener("change", changeSky);
+  state.cityNameReset.addEventListener("click", resetCityName);
 };
-
 
 // select HTML elements from the DOM
 const loadControls = () => {
@@ -158,14 +167,15 @@ const loadControls = () => {
   state.currentTempButton = document.getElementById("currentTempButton");
   state.skySelect = document.getElementById("skySelect");
   state.sky = document.getElementById("sky");
+  state.cityNameReset = document.getElementById("cityNameReset");
 };
-
 
 const onLoaded = () => {
   loadControls();
   registerEvents();
   updateVisuals();
   changeSky();
+  resetCityName();
 };
 
 
