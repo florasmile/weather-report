@@ -149,16 +149,21 @@ color: teal;
 
 .cloudy {
 background-color: lightgrey;
+  /* Add transition for background color */
+transition: background-color 0.5s ease;
 }
 
 .sunny {
 background-color: rgb(221, 255, 255);
+transition: background-color 0.5s ease;
 }
 
 .rainy {
 background-color: lightblue;
+transition: background-color 0.5s ease;
 }
 
 .snowy {
 background-color: lightsteelblue;
+transition: background-color 0.5s ease;
 }
