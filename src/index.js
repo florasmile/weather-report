@@ -63,7 +63,7 @@ const updateCityName = () => {
 //input: cityName
 // output: location<>
 const findLatAndLon = async (cityName) => {
-  const response = await axios.get('http://localhost:5000/location',
+  const response = await axios.get('http://127.0.0.1:5000/location',
     {
       params: {
         q: cityName,
@@ -84,7 +84,7 @@ const convertTempUnits = (kelvin) => {
 
 const getWeatherData = async ({ lat, lon }) => {
   // const { lat, lon } = location;
-  const response = await axios.get('http://localhost:5000/weather',
+  const response = await axios.get('http://127.0.0.1:5000/weather',
     {
       params: {
         lat: lat,
@@ -94,19 +94,28 @@ const getWeatherData = async ({ lat, lon }) => {
     });
     // get temp from response body, response.main.temp
     // convert temp from Kelvin to F unit
-    return convertTempUnits(response.data.main.temp);
+    return {
+      temp: convertTempUnits(response.data.main.temp),
+      sky: response.data.weather[0].main
+    };
 };
+
 // calling APIs to get real temp
-const updateRealTemp = async () => {
+const updateRealWeather = async () => {
   try {
     // get cityName
     const cityName = state.cityNameInput.value;
     // get lat, lon from calling API
     const location = await findLatAndLon(cityName);
-    // get weather using lat, lon and calling API, update temp value
-    state.temp = await getWeatherData(location);
-    //use updated temp value to update temp color and landscape
+    // get weather and sky condition using lat, lon and calling API, update values
+    const {temp, sky} = await getWeatherData(location);
+    
+    //use updated temp value to update temp color, sky and landscape
+    state.temp = temp;
+    state.skySelect.value = sky.toLowerCase();
+  
     updateVisuals();
+    changeSky(sky.toLowerCase());
   }
   catch (error) {
     console.log(error);
@@ -120,11 +129,11 @@ const updateRealTemp = async () => {
 //     updateVisuals();
 //   } 
 
-const changeSky = () => {
+const changeSky = (realSkyCondition = null) => {
   // get sky condition value
-  const skyCondition = state.skySelect.value;
+  const skyCondition = realSkyCondition || state.skySelect.value;
   // remove all existing background colors
-  const skyBackgroundColors = ["sunny", "cloudy", "rainy", "snowy"];
+  const skyBackgroundColors = ["sunny", "cloudy", "rainy", "snowy", "stormy", "drizzly","foggy"];
   skyBackgroundColors.forEach((color) => {
     if(state.gardenContent.classList.contains(color)) {
       state.gardenContent.classList.remove(color);
@@ -133,7 +142,7 @@ const changeSky = () => {
   let background = "";
   // add sky based on sky condition
   if(skyCondition === "clear") {
-    state.sky.textContent = "☁️ ☁️ ☁️ ☀️ ☁️ ☁️";
+    state.sky.textContent = "☁️ ☁️ ☁️ ☀️ ☁️ ☁️☀️ ☀️ ☀️ ";
     background = "sunny";
   } else if(skyCondition === "clouds"){
     state.sky.textContent = "☁️☁️ ☁️ ☁️☁️ ☁️ 🌤 ☁️ ☁️☁️";
@@ -144,7 +153,18 @@ const changeSky = () => {
   }else if(skyCondition === "snow") {
     state.sky.textContent = "🌨❄️🌨🌨❄️❄️🌨❄️🌨❄️❄️🌨🌨";
     background = "snowy";
+  }else if(skyCondition === "thunderstorm") {
+    state.sky.textContent = "🌩⚡️⛈🌩⛈🌪🌩⛈⚡️🌪🌩⛈⚡️⛈";
+    background = "stormy";
   }
+  else if(skyCondition === "drizzle") {
+    state.sky.textContent = "🌦💧🌦🌧🌦💧🌧🌦🌦💧🌦🌧🌦";
+    background = "drizzly";
+  }else if(skyCondition === "atmosphere") {
+    state.sky.textContent = "🌫🌫🌁🌁🌫🌫🌫🌫🌫🌫🌁🌁🌫";
+    background = "foggy";
+  }
+
   state.gardenContent.classList.add(background);
 };
 
@@ -164,7 +184,7 @@ const registerEvents = () => {
       updateCityName();
     }
   })
-  state.currentTempButton.addEventListener("click", updateRealTemp);
+  state.currentTempButton.addEventListener("click", updateRealWeather);
   state.skySelect.addEventListener("change", changeSky);
   state.cityNameReset.addEventListener("click", resetCityName);
 };

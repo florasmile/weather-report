@@ -167,3 +167,19 @@ transition: background-color 0.5s ease;
 background-color: lightsteelblue;
 transition: background-color 0.5s ease;
 }
+
+.stormy {
+  background-color: rgb(80, 80, 120); 
+  color: white;
+  transition: background-color 0.5s ease;
+}
+
+.foggy {
+  background-color: rgb(220, 220, 220); 
+  transition: background-color 0.5s ease;
+}
+
+.drizzly {
+  background-color: rgb(180, 210, 230); 
+  transition: background-color 0.5s ease;
+}
