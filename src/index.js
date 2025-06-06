@@ -1,5 +1,5 @@
 "use strict";
-// define state objects and add variables and their states
+// define state objects, add variables and initial value
 const state = {
   increaseTempControl: null,
   decreaseTempControl: null,
@@ -16,38 +16,43 @@ const state = {
   gardenContent: null
 };
 
-
+// set temp text color and landscape based on temp value
 const updateVisuals = () => {
   const value = state.temp;
   state.tempValue.textContent = value;
   // clear all existing classes
   state.tempValue.className = "";
+  // refactor: use variables to reduce repeated codes
+  let color = "";
+  let landEmoji = "";
 
   if (value >= 80) {
-    state.tempValue.classList.add("red");
-    state.landscape.textContent = "🌵__🐍_🦂_🌵🌵__🐍_🏜_🦂";
+    color = "red";
+    landEmoji = "🌵__🐍_🦂_🌵🌵__🐍_🏜_🦂";
   } else if (value >= 70) {
-    state.tempValue.classList.add("orange");
-    state.landscape.textContent = "🌸🌿🌼__🌷🌻🌿_☘️🌱_🌻🌷";
+    color = "orange";
+    landEmoji = "🌸🌿🌼__🌷🌻🌿_☘️🌱_🌻🌷";
   } else if (value >= 60) {
-    state.tempValue.classList.add("yellow");
-    state.landscape.textContent = "🌾🌾_🍃_🪨__🛤_🌾🌾🌾_🍃";
+    color = "yellow";
+    landEmoji = "🌾🌾_🍃_🪨__🛤_🌾🌾🌾_🍃";
   } else if (value >= 50) {
-    state.tempValue.classList.add("green");
-    state.landscape.textContent = "🌲🌲⛄️🌲⛄️🍂🌲🍁🌲🌲⛄️🍂🌲";
+    color = "green";
+    landEmoji =  "🌲🌲⛄️🌲⛄️🍂🌲🍁🌲🌲⛄️🍂🌲";
   } else {
-    state.tempValue.classList.add("teal");
-    state.landscape.textContent = "🌲🌲⛄️🌲⛄️🍂🌲🍁🌲🌲⛄️🍂🌲";
+    color = "teal";
+    landEmoji = "🌲🌲⛄️🌲⛄️🍂🌲🍁🌲🌲⛄️🍂🌲";
   }
+  state.tempValue.classList.add(color);
+  state.landscape.textContent = landEmoji;
 };
 
-
-// action: define how to want to handle events
+// define actions when clicking increase temp arrow
 const increaseTempByOne = () => {
   state.temp += 1;
   updateVisuals();
 };
 
+//define actions when clicking decrease temp arrow
 const decreaseTempByOne = () => {
   state.temp -= 1;
   updateVisuals();
@@ -109,11 +114,9 @@ const updateRealWeather = async () => {
     const location = await findLatAndLon(cityName);
     // get weather and sky condition using lat, lon and calling API, update values
     const {temp, sky} = await getWeatherData(location);
-    
     //use updated temp value to update temp color, sky and landscape
     state.temp = temp;
     state.skySelect.value = sky.toLowerCase();
-  
     updateVisuals();
     changeSky(sky.toLowerCase());
   }
@@ -122,51 +125,46 @@ const updateRealWeather = async () => {
   };
 };
 
-// const updateRealTemp = async () => {
-//     const temp = await getRealTemp();
-//      // update tempValue
-//     state.temp = temp;
-//     updateVisuals();
-//   } 
-
+//handle two ways to change sky: through drop down or getRealTimeWeather; 
+// need to update sky and garden background color
 const changeSky = (realSkyCondition=null) => {
-  // get sky condition value
+  // get sky condition value; when there is realTime data, update sky using realSky data
   const skyCondition = realSkyCondition || state.skySelect.value;
   // remove all existing background colors
-  const skyBackgroundColors = ["sunny", "cloudy", "rainy", "snowy", "stormy", "drizzly","foggy"];
+  const skyBackgroundColors = ["sunny", "cloudy", "rainy", "snowy", "stormy", "drizzly", "foggy"];
   skyBackgroundColors.forEach((color) => {
     if(state.gardenContent.classList.contains(color)) {
       state.gardenContent.classList.remove(color);
     };
   });
-  // let background = "";
+  // refactor: define background and emoji to reduce repeation
+  let skyEmoji = "";
+  let background = "";  
   // add sky based on sky condition
-  console.log(state.skySelect.value);
-  console.log(skyCondition);
   if(skyCondition === "clear") {
-    state.sky.textContent = "☁️ ☁️ ☁️ ☀️ ☁️ ☁️☀️ ☀️ ☀️ ";
-    state.gardenContent.classList.add("sunny");
+    skyEmoji = "☁️ ☁️ ☁️ ☀️ ☁️ ☁️☀️ ☀️ ☀️ ";
+    background = "sunny";
   } else if(skyCondition === "clouds"){
-    state.sky.textContent = "☁️☁️ ☁️ ☁️☁️ ☁️ 🌤 ☁️ ☁️☁️";
-    state.gardenContent.classList.add("cloudy");
+    skyEmoji = "☁️☁️ ☁️ ☁️☁️ ☁️ 🌤 ☁️ ☁️☁️";
+    background ="cloudy";
   }else if(skyCondition === "rain") {
-    state.sky.textContent = "🌧🌈⛈🌧🌧💧⛈🌧🌦🌧💧🌧🌧";
-    state.gardenContent.classList.add("rainy");
+    skyEmoji = "🌧🌈⛈🌧🌧💧⛈🌧🌦🌧💧🌧🌧";
+    background = "rainy";
   }else if(skyCondition === "snow") {
-    state.sky.textContent = "🌨❄️🌨🌨❄️❄️🌨❄️🌨❄️❄️🌨🌨";
-    state.gardenContent.classList.add("snowy");
+    skyEmoji = "🌨❄️🌨🌨❄️❄️🌨❄️🌨❄️❄️🌨🌨";
+    background = "snowy";
   }else if(skyCondition === "thunderstorm") {
-    state.sky.textContent = "🌩⚡️⛈🌩⛈🌪🌩⛈⚡️🌪🌩⛈⚡️⛈";
-    state.gardenContent.classList.add("stormy");
+    skyEmoji = "🌩⚡️⛈🌩⛈🌪🌩⛈⚡️🌪🌩⛈⚡️⛈";
+    background = "stormy";
   }else if(skyCondition === "drizzle") {
-    state.sky.textContent = "🌦💧🌦🌧🌦💧🌧🌦🌦💧🌦🌧🌦";
-    state.gardenContent.classList.add("drizzly");
+    skyEmoji = "🌦💧🌦🌧🌦💧🌧🌦🌦💧🌦🌧🌦";
+    background = "drizzly";
   }else if(skyCondition === "atmosphere") {
-    state.sky.textContent = "🌫🌫🌁🌁🌫🌫🌫🌫🌫🌫🌁🌁🌫";
-    state.gardenContent.classList.add("foggy");
+    skyEmoji = "🌫🌫🌁🌁🌫🌫🌫🌫🌫🌫🌁🌁🌫";
+    background = "foggy";
   };
-  // console.log(background);
-  // state.gardenContent.classList.add(background);
+  state.sky.textContent = skyEmoji;
+  state.gardenContent.classList.add(background);
 };
 
 const resetCityName = () => {
@@ -176,9 +174,8 @@ const resetCityName = () => {
   updateCityName();
 }
 // registerEvents, link the action to the element to change the state
-//when clicked on the increaseTempControl (up arrow), we want to increase the tempValue by one 
 const registerEvents = () => {
-  state.increaseTempControl.addEventListener('click', increaseTempByOne);
+  state.increaseTempControl.addEventListener("click", increaseTempByOne);
   state.decreaseTempControl.addEventListener("click", decreaseTempByOne);
   state.cityNameInput.addEventListener("keydown", (event) => {
     if (event.key == "Enter") {
@@ -186,6 +183,7 @@ const registerEvents = () => {
     };
   });
   state.currentTempButton.addEventListener("click", updateRealWeather);
+  // **cannot just add changeSky as 2nd argument
   state.skySelect.addEventListener("change", function() {
     changeSky();
   });
@@ -210,8 +208,8 @@ const loadControls = () => {
 const onLoaded = () => {
   loadControls();
   registerEvents();
-  updateVisuals();
-  changeSky();
+  updateVisuals();//load landscape using initial default temp
+  changeSky(); //load emoji using default (first) sky
   resetCityName();
 };
 
