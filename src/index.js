@@ -68,7 +68,7 @@ const updateCityName = () => {
 //input: cityName
 // output: location<>
 const findLatAndLon = async (cityName) => {
-  const response = await axios.get('http://127.0.0.1:5000/location',
+  const response = await axios.get('https://weather-report-proxy-server-ldjf.onrender.com/location',
     {
       params: {
         q: cityName,
@@ -89,7 +89,7 @@ const convertTempUnits = (kelvin) => {
 
 const getWeatherData = async ({ lat, lon }) => {
   // const { lat, lon } = location;
-  const response = await axios.get('http://127.0.0.1:5000/weather',
+  const response = await axios.get('https://weather-report-proxy-server-ldjf.onrender.com/weather',
     {
       params: {
         lat: lat,
