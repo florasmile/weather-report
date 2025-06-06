@@ -129,7 +129,7 @@ const updateRealWeather = async () => {
 //     updateVisuals();
 //   } 
 
-const changeSky = (realSkyCondition = null) => {
+const changeSky = (realSkyCondition=null) => {
   // get sky condition value
   const skyCondition = realSkyCondition || state.skySelect.value;
   // remove all existing background colors
@@ -137,35 +137,36 @@ const changeSky = (realSkyCondition = null) => {
   skyBackgroundColors.forEach((color) => {
     if(state.gardenContent.classList.contains(color)) {
       state.gardenContent.classList.remove(color);
-    }
-  })
-  let background = "";
+    };
+  });
+  // let background = "";
   // add sky based on sky condition
+  console.log(state.skySelect.value);
+  console.log(skyCondition);
   if(skyCondition === "clear") {
     state.sky.textContent = "☁️ ☁️ ☁️ ☀️ ☁️ ☁️☀️ ☀️ ☀️ ";
-    background = "sunny";
+    state.gardenContent.classList.add("sunny");
   } else if(skyCondition === "clouds"){
     state.sky.textContent = "☁️☁️ ☁️ ☁️☁️ ☁️ 🌤 ☁️ ☁️☁️";
-    background = "cloudy";
+    state.gardenContent.classList.add("cloudy");
   }else if(skyCondition === "rain") {
     state.sky.textContent = "🌧🌈⛈🌧🌧💧⛈🌧🌦🌧💧🌧🌧";
-    background = "rainy";
+    state.gardenContent.classList.add("rainy");
   }else if(skyCondition === "snow") {
     state.sky.textContent = "🌨❄️🌨🌨❄️❄️🌨❄️🌨❄️❄️🌨🌨";
-    background = "snowy";
+    state.gardenContent.classList.add("snowy");
   }else if(skyCondition === "thunderstorm") {
     state.sky.textContent = "🌩⚡️⛈🌩⛈🌪🌩⛈⚡️🌪🌩⛈⚡️⛈";
-    background = "stormy";
-  }
-  else if(skyCondition === "drizzle") {
+    state.gardenContent.classList.add("stormy");
+  }else if(skyCondition === "drizzle") {
     state.sky.textContent = "🌦💧🌦🌧🌦💧🌧🌦🌦💧🌦🌧🌦";
-    background = "drizzly";
+    state.gardenContent.classList.add("drizzly");
   }else if(skyCondition === "atmosphere") {
     state.sky.textContent = "🌫🌫🌁🌁🌫🌫🌫🌫🌫🌫🌁🌁🌫";
-    background = "foggy";
-  }
-
-  state.gardenContent.classList.add(background);
+    state.gardenContent.classList.add("foggy");
+  };
+  // console.log(background);
+  // state.gardenContent.classList.add(background);
 };
 
 const resetCityName = () => {
@@ -182,10 +183,12 @@ const registerEvents = () => {
   state.cityNameInput.addEventListener("keydown", (event) => {
     if (event.key == "Enter") {
       updateCityName();
-    }
-  })
+    };
+  });
   state.currentTempButton.addEventListener("click", updateRealWeather);
-  state.skySelect.addEventListener("change", changeSky);
+  state.skySelect.addEventListener("change", function() {
+    changeSky();
+  });
   state.cityNameReset.addEventListener("click", resetCityName);
 };
 
@@ -212,7 +215,6 @@ const onLoaded = () => {
   resetCityName();
 };
 
-
-// document.addEventListener("DOMContentLoaded", onLoaded);
+// entry point
 onLoaded();
 
